@@ -1,95 +1,106 @@
-import Image from "next/image";
+"use client";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 import styles from "./page.module.css";
 
-export default function Home() {
+interface Post {
+  _id: string;
+  title: string;
+}
+
+export default function HomePage() {
+  const [posts, setPosts] = useState<Post[]>([]);
+
+  useEffect(() => {
+    async function fetchPosts() {
+      const res = await fetch("/api/posts");
+      const data = await res.json();
+      setPosts(data);
+    }
+
+    fetchPosts();
+  }, []);
+
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+    <div className={styles.page}>
+      {/* Navigation Bar */}
+      <nav className={styles.nav}>
+        <div className={styles.logo}>My Blog</div>
+        <ul className={styles.navLinks}>
+          <li>
+            <Link href="/">Home</Link>
+          </li>
+          <li>
+            <Link href="/about">About</Link>
+          </li>
+          <li>
+            <Link href="/contact">Contact</Link>
+          </li>
+        </ul>
+      </nav>
+
+      {/* Hero Section */}
+      <header className={styles.hero}>
+        <div className={styles.heroContent}>
+          <h1>Welcome to My Blog</h1>
+          <p>Discover amazing content, tutorials, and insights!</p>
+          <div className={styles.heroButtons}>
+            <Link href="/posts" className={styles.heroButton}>
+              Create Post
+            </Link>
+            <Link href="/subscribe" className={styles.heroButtonAlt}>
+              Subscribe Now
+            </Link>
+          </div>
         </div>
-      </div>
+      </header>
 
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+      {/* Blog Posts Section */}
+      <section className={styles.postsSection}>
+        <h2 className={styles.sectionTitle}>Latest Blog Posts</h2>
+        <div className={styles.postsGrid}>
+          {posts.map((post) => (
+            <div key={post._id} className={styles.postCard}>
+              <Link href={`/posts/${post._id}`}>
+                <h3 className={styles.postTitle}>{post.title}</h3>
+              </Link>
+            </div>
+          ))}
+        </div>
+      </section>
 
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+      {/* Footer */}
+      <footer className={styles.footer}>
+        <div className={styles.footerContent}>
+          <div className={styles.newsletter}>
+            <h3>Subscribe to our Newsletter</h3>
+            <form className={styles.newsletterForm}>
+              <input type="email" placeholder="Enter your email" required />
+              <button type="submit">Subscribe</button>
+            </form>
+          </div>
+          <div className={styles.footerLinks}>
+            <h3>Quick Links</h3>
+            <ul>
+              <li>
+                <Link href="/">Home</Link>
+              </li>
+              <li>
+                <Link href="/about">About</Link>
+              </li>
+              <li>
+                <Link href="/contact">Contact</Link>
+              </li>
+              <li>
+                <Link href="/privacy">Privacy Policy</Link>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <p className={styles.footerCopy}>
+          © 2024 My Blog. All rights reserved.
+        </p>
+      </footer>
+    </div>
   );
 }
